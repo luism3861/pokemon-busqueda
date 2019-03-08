@@ -1,25 +1,58 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import "./App.css";
+import Buscador from "./components/Buscador";
+import Pokemon from "./components/Pokemon";
 
 class App extends Component {
+
+  
+  state = {
+    pokemon: "",
+    imageUrl: {}
+  };
+
+  // componentDidMount() {
+  //   this.consultarAPI();
+  // }
+
+  consultarAPI = () => {
+    const pokemon = this.state.pokemon;
+    const url = `https://pokeapi.co/api/v2/pokemon/${pokemon}`;
+    fetch(url)
+      .then(res => res.json())
+      .then(resultado => {
+        this.setState({
+          pokemon: resultado,
+          imageUrl: resultado.sprites.front_default
+        });
+      });
+      console.log(url)
+  };
+
+  datosBusqueda = pokemon => {
+    this.setState(
+      {
+        pokemon
+      },
+      () => {
+        this.consultarAPI();
+      }
+    );
+  };
+
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+        <div className="app container">
+          <div className="jumbotron">
+            <p className="lead text-center">POKEMON API</p>
+            <Buscador datosBusqueda={this.datosBusqueda} />
+          </div>
+          <Pokemon
+            pokemon={this.state.pokemon}
+            imageUrl={this.state.imageUrl}
+          />
+        </div>
       </div>
     );
   }
